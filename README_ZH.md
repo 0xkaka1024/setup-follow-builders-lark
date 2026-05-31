@@ -3,7 +3,7 @@
 # Follow Builders 飞书每日摘要
 
 ![Platform](https://img.shields.io/badge/platform-macOS%20only-lightgrey)
-![Delivery](https://img.shields.io/badge/delivery-Feishu-blue)
+![Delivery](https://img.shields.io/badge/delivery-Lark-blue)
 ![Source](https://img.shields.io/badge/source-follow--builders-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 

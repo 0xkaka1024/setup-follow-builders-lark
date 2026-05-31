@@ -1,6 +1,6 @@
 ---
 name: setup-follow-builders-lark
-description: Set up and manage a macOS automation that sends a concise daily Follow Builders AI digest to a Feishu group using follow-builders, Codex CLI, lark-cli, and launchd. Use when the user wants AI Builders summaries in Feishu, wants a daily scheduled digest, needs sleep/wake or reboot catch-up delivery, wants to test the Feishu digest, or wants to inspect, change, or remove the local macOS automation.
+description: Set up and manage a macOS automation that sends a concise daily Follow Builders AI digest to a Lark group using follow-builders, Codex CLI, lark-cli, and launchd. Use when the user wants AI Builders summaries in Lark, wants a daily scheduled digest, needs sleep/wake or reboot catch-up delivery, wants to test the Lark digest, or wants to inspect, change, or remove the local macOS automation.
 ---
 
 # Setup Follow Builders Lark
@@ -15,7 +15,7 @@ Keep the first version focused: use the centrally maintained Follow Builders sou
 
 ## Safety Rules
 
-- Confirm the target Feishu group, bot identity, and exact test message before sending any visible message.
+- Confirm the target Lark group, bot identity, and exact test message before sending any visible message.
 - Ask for confirmation before enabling, disabling, or uninstalling the scheduled task.
 - Never print app secrets, tokens, or local credential files.
 - Do not weaken macOS Keychain protection. The verified pipeline works through the logged-in user's LaunchAgent.
@@ -47,13 +47,13 @@ If `lark-cli` is missing, install the official CLI:
 npm install -g @larksuite/cli@latest
 ```
 
-If Feishu is not configured, run `lark-cli config init --new`, relay the official setup URL, and wait for the user to finish. Verify:
+If Lark is not configured, run `lark-cli config init --new`, relay the official setup URL, and wait for the user to finish. Verify:
 
 ```bash
 lark-cli auth status
 ```
 
-## Choose the Feishu Group
+## Choose the Lark Group
 
 Prefer an existing group if the user names one. Otherwise create a private `AI Builders Digest` group.
 
@@ -113,7 +113,7 @@ Generate a preview without sending:
 
 Show the preview. Ask the user to confirm:
 
-1. Send the preview now to the named Feishu group as the bot.
+1. Send the preview now to the named Lark group as the bot.
 2. Allow future automatic messages of the same type.
 
 After confirmation:

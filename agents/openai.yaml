@@ -1,4 +1,4 @@
 interface:
   display_name: "Follow Builders 飞书推送"
   short_description: "在 macOS 上设置每日 AI Builders 飞书摘要"
-  default_prompt: "Use $setup-follow-builders-lark to set up a daily Chinese AI Builders digest in Feishu."
+  default_prompt: "Use $setup-follow-builders-lark to set up a daily Chinese AI Builders digest in Lark."

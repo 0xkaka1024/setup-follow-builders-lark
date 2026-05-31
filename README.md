@@ -1,19 +1,19 @@
 English | [简体中文](README_ZH.md)
 
-# Follow Builders Daily Feishu Digest
+# Follow Builders Daily Lark Digest
 
 ![Platform](https://img.shields.io/badge/platform-macOS%20only-lightgrey)
-![Delivery](https://img.shields.io/badge/delivery-Feishu-blue)
+![Delivery](https://img.shields.io/badge/delivery-Lark-blue)
 ![Source](https://img.shields.io/badge/source-follow--builders-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-A Codex skill for macOS users that automatically summarizes important AI industry updates and sends a concise daily digest to a Feishu group.
+A Codex skill for macOS users that automatically summarizes important AI industry updates and sends a concise daily digest to a Lark group.
 
-It is designed for people who want to follow AI industry developments in Feishu without maintaining their own information sources.
+It is designed for people who want to follow AI industry developments in Lark without maintaining their own information sources.
 
 ## What You Will Receive
 
-One concise Feishu message each day:
+One concise Lark message each day:
 
 - Up to 4 high-value AI builder updates
 - Up to 1 official blog post
@@ -49,7 +49,7 @@ https://github.com/0xkaka1024/setup-follow-builders-lark
 Restart Codex after installation, then enter:
 
 ```text
-Use setup-follow-builders-lark to set up a daily Feishu AI digest at 8:00 AM.
+Use setup-follow-builders-lark to set up a daily Lark AI digest at 8:00 AM.
 ```
 
 Codex will guide you through the setup. You do not need to edit configuration files manually.
@@ -67,14 +67,14 @@ Initial setup usually takes 3-5 minutes:
 
 ```text
 Install dependencies
-→ Configure a Feishu app bot
+→ Configure a Lark app bot
 → Create or select a digest group
 → Preview the digest
 → Confirm a test message
 → Enable the scheduled task
 ```
 
-During setup, you will see the required permission confirmations and the official Feishu authorization page. Before enabling the scheduled task, Codex will show a digest preview and ask for confirmation.
+During setup, you will see the required permission confirmations and the official Lark authorization page. Before enabling the scheduled task, Codex will show a digest preview and ask for confirmation.
 
 ## How It Works
 
@@ -82,17 +82,17 @@ During setup, you will see the required permission confirmations and the officia
 macOS launchd starts the scheduled task
 → follow-builders fetches public feeds
 → codex exec generates a concise digest
-→ the lark-cli bot sends it to a Feishu group
+→ the lark-cli bot sends it to a Lark group
 ```
 
 This project is not a fork of [follow-builders](https://github.com/zarazhangrui/follow-builders), and it does not copy its data-fetching logic. It reuses the locally installed follow-builders scripts and the public sources maintained upstream.
 
-Digest generation and Feishu delivery both run on your Mac:
+Digest generation and Lark delivery both run on your Mac:
 
 - No X/Twitter or YouTube API key is required
-- Your Feishu credentials are not uploaded
+- Your Lark credentials are not uploaded
 - The default follow-builders sources are not modified
-- Unrelated Feishu capabilities such as Docs, Sheets, and Calendar are not enabled
+- Unrelated Lark capabilities such as Docs, Sheets, and Calendar are not enabled
 
 ## Requirements
 
@@ -102,7 +102,7 @@ First-time setup requires:
 
 - Node.js
 - Codex CLI with an active login
-- A Feishu account
+- A Lark account
 - A network connection
 
 The skill checks for and guides the installation of:
@@ -157,7 +157,7 @@ tail -n 80 ~/.follow-builders/logs/push-error.log
 | Problem | Recommendation |
 |---|---|
 | No digest received | Run `status.sh` and confirm that the task is loaded |
-| No Feishu message | Check `push-error.log` and confirm that the bot is still in the digest group |
+| No Lark message | Check `push-error.log` and confirm that the bot is still in the digest group |
 | Digest generation fails | Confirm that Codex CLI is still logged in |
 | No catch-up delivery after sleep or shutdown | Log in to macOS, reconnect to the network, and wait up to 15 minutes |
 | Need an immediate test | Ask Codex to preview the digest, then confirm one test send |
@@ -180,12 +180,12 @@ Codex will ask for confirmation before uninstalling.
 
 ## Privacy and Permissions
 
-- Feishu credentials remain on your Mac
-- Feishu tokens are not written to the repository
+- Lark credentials remain on your Mac
+- Lark tokens are not written to the repository
 - macOS Keychain protections are not weakened
-- Codex asks for confirmation before sending visible Feishu messages
+- Codex asks for confirmation before sending visible Lark messages
 - Codex asks for confirmation before enabling, disabling, or uninstalling the scheduled task
-- Only Feishu instant messaging capabilities are used to send messages and create the digest group
+- Only Lark instant messaging capabilities are used to send messages and create the digest group
 
 ## Sources and Limitations
 
@@ -207,4 +207,4 @@ The current version intentionally stays simple and does not support:
 ## Credits
 
 - Feed collection and default sources: [zarazhangrui/follow-builders](https://github.com/zarazhangrui/follow-builders)
-- Feishu message delivery: [larksuite/cli](https://github.com/larksuite/cli)
+- Lark message delivery: [larksuite/cli](https://github.com/larksuite/cli)
