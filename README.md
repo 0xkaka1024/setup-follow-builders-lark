@@ -1,5 +1,7 @@
 # Follow Builders 飞书每日摘要
 
+[简体中文](README.md) | [English](README_EN.md)
+
 ![Platform](https://img.shields.io/badge/platform-macOS%20only-lightgrey)
 ![Delivery](https://img.shields.io/badge/delivery-Feishu-blue)
 ![Source](https://img.shields.io/badge/source-follow--builders-orange)
