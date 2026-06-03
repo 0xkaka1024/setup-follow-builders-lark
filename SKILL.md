@@ -97,10 +97,10 @@ node scripts/setup.mjs \
   --max-characters 900
 ```
 
-Default model: `gpt-5.2`. Override only if the local Codex CLI supports the requested model:
+By default the automation uses the model from the user's Codex CLI configuration. Override only if the local Codex CLI and the account both support the requested model:
 
 ```bash
-node scripts/setup.mjs --chat-id "oc_xxx" --model "gpt-5.2"
+node scripts/setup.mjs --chat-id "oc_xxx" --model "gpt-5.5"
 ```
 
 ## Preview, Confirm, Send, Enable

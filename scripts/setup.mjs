@@ -41,15 +41,16 @@ if (!Number.isInteger(maxCharacters) || maxCharacters < 200 || maxCharacters > 5
   fail("--max-characters must be an integer from 200 to 5000");
 }
 
-const model = args.model || "gpt-5.2";
-if (!/^[A-Za-z0-9._-]+$/.test(model)) fail("--model contains unsupported characters");
+const model = args.model || "";
+if (model && !/^[A-Za-z0-9._-]+$/.test(model)) fail("--model contains unsupported characters");
 
 const followBuildersDir =
   args["follow-builders-dir"] || join(home, ".codex", "skills", "follow-builders");
 await requireFile(join(followBuildersDir, "scripts", "prepare-digest.js"), "follow-builders");
 
 const nodeBin = args["node-bin"] || which("node");
-const codexBin = args["codex-bin"] || which("codex");
+const localCodexBin = join(userDir, "codex-cli", "node_modules", ".bin", "codex");
+const codexBin = args["codex-bin"] || ((await fileExists(localCodexBin)) ? localCodexBin : which("codex"));
 const larkBin = args["lark-bin"] || which("lark-cli");
 
 await mkdir(join(userDir, "bin"), { recursive: true });

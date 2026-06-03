@@ -31,7 +31,7 @@ config_value() {
 FOLLOW_BUILDERS_DIR="$(config_value paths.followBuildersDir)"
 CODEX_BIN="$(config_value paths.codexBin)"
 LARK_BIN="$(config_value paths.larkBin)"
-MODEL="$(config_value model)"
+MODEL="$(config_value model 2>/dev/null || true)"
 MAX_CHARACTERS="$(config_value maxCharacters)"
 CHAT_ID="$(config_value delivery.chatId)"
 DELIVERY_TIME="$(config_value deliveryTime | tr -d ':')"
@@ -102,8 +102,13 @@ EOF
 
 cat "$WORK_DIR/input.json" >> "$WORK_DIR/request.txt"
 
+CODEX_MODEL_ARGS=()
+if [[ -n "$MODEL" ]]; then
+  CODEX_MODEL_ARGS=(--model "$MODEL")
+fi
+
 "$CODEX_BIN" exec \
-  --model "$MODEL" \
+  "${CODEX_MODEL_ARGS[@]}" \
   --config 'model_reasoning_effort="low"' \
   --sandbox read-only \
   --skip-git-repo-check \
