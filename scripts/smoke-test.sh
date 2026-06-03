@@ -64,6 +64,10 @@ EOF
 cat > "$FAKE_LARK" <<EOF
 #!/bin/zsh
 set -euo pipefail
+if [[ "\${SMOKE_LARK_FAIL:-}" == "1" ]]; then
+  echo "simulated lark failure" >&2
+  exit 1
+fi
 printf '%s\n' "\$*" >> "$LARK_LOG"
 printf '{"ok":true,"identity":"bot"}\n'
 EOF
@@ -87,6 +91,11 @@ HOME="$HOME_DIR" "$SCRIPT_DIR/preflight.sh" | grep -q "Preflight passed"
 HOME="$HOME_DIR" "$RUNTIME" --force >/dev/null
 HOME="$HOME_DIR" "$RUNTIME" | grep -q "Digest already sent"
 grep -q -- "--chat-id oc_smoketest" "$LARK_LOG"
+if SMOKE_LARK_FAIL=1 HOME="$HOME_DIR" "$RUNTIME" --force >/dev/null 2>&1; then
+  echo "Expected Lark failure" >&2
+  exit 1
+fi
+grep -q "stage: lark" "$HOME_DIR/.follow-builders/state/last-error.txt"
 plutil -lint "$HOME_DIR/Library/LaunchAgents/com.local.follow-builders.lark-push.plist" >/dev/null
 
 echo "Smoke test passed"

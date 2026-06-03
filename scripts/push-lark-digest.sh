@@ -7,6 +7,7 @@ USER_DIR="${FOLLOW_BUILDERS_USER_DIR:-$HOME/.follow-builders}"
 CONFIG_PATH="$USER_DIR/config.json"
 STATE_DIR="$USER_DIR/state"
 LAST_SUCCESS_FILE="$STATE_DIR/last-successful-push-date"
+LAST_ERROR_FILE="$STATE_DIR/last-error.txt"
 LOCK_DIR="$STATE_DIR/push.lock"
 MODE="${1:-}"
 LOCK_HELD=0
@@ -49,6 +50,18 @@ esac
 
 mkdir -p "$STATE_DIR" "$USER_DIR/logs"
 
+record_error() {
+  local stage="$1"
+  local detail="$2"
+  local suggestion="$3"
+  {
+    printf 'time: %s\n' "$(TZ="$TIMEZONE" date '+%Y-%m-%d %H:%M:%S %Z')"
+    printf 'stage: %s\n' "$stage"
+    printf 'error: %s\n' "$detail"
+    printf 'suggestion: %s\n' "$suggestion"
+  } > "$LAST_ERROR_FILE"
+}
+
 if [[ "$MODE" != "--generate-only" ]]; then
   if [[ "$MODE" != "--force" && "$CURRENT_TIME" < "$DELIVERY_TIME" ]]; then
     echo "Before the scheduled send time; skipping"
@@ -82,7 +95,11 @@ cleanup() {
 trap cleanup EXIT
 
 cd "$FOLLOW_BUILDERS_DIR/scripts"
-"$NODE_BIN" prepare-digest.js > "$WORK_DIR/input.json"
+if ! "$NODE_BIN" prepare-digest.js > "$WORK_DIR/input.json" 2> "$USER_DIR/logs/feed-error.log"; then
+  record_error "follow-builders" "Feed generation failed." "Check network access and try again later. See logs/feed-error.log for details."
+  cat "$USER_DIR/logs/feed-error.log" >&2
+  exit 1
+fi
 
 cat > "$WORK_DIR/request.txt" <<EOF
 Generate the final AI Builders Digest message from the JSON appended below.
@@ -131,6 +148,13 @@ if [[ "$CODEX_STATUS" != "0" && -n "$MODEL" ]] && grep -Eqi "model .*not support
 fi
 
 if [[ "$CODEX_STATUS" != "0" || ! -s "$WORK_DIR/digest.txt" ]]; then
+  if grep -Eqi "model .*not supported|requires a newer version of Codex" "$USER_DIR/logs/codex.log" "$USER_DIR/logs/codex-model-error.log" 2>/dev/null; then
+    record_error "codex" "Codex model or CLI version is incompatible." "Upgrade Codex CLI or remove the configured model so the Codex default model can be used."
+  elif grep -Eqi "auth|login|unauthorized" "$USER_DIR/logs/codex.log" 2>/dev/null; then
+    record_error "codex" "Codex authentication failed." "Re-login to Codex CLI, then run scripts/preflight.sh."
+  else
+    record_error "codex" "Digest generation returned no content." "Check logs/codex.log, then run scripts/preflight.sh."
+  fi
   echo "Digest generation returned no content" >&2
   exit 1
 fi
@@ -142,10 +166,14 @@ if [[ "$MODE" == "--generate-only" ]]; then
   exit 0
 fi
 
-"$LARK_BIN" im +messages-send \
+if ! "$LARK_BIN" im +messages-send \
   --chat-id "$CHAT_ID" \
   --text "$DIGEST" \
-  --as bot
+  --as bot; then
+  record_error "lark" "Lark message send failed." "Check that lark-cli is authorized and the bot is still in the target group."
+  exit 1
+fi
 
 printf '%s\n' "$TODAY" > "$LAST_SUCCESS_FILE.tmp"
 mv "$LAST_SUCCESS_FILE.tmp" "$LAST_SUCCESS_FILE"
+rm -f "$LAST_ERROR_FILE"

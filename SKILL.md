@@ -156,6 +156,8 @@ tail -n 80 ~/.follow-builders/logs/push.log
 tail -n 80 ~/.follow-builders/logs/push-error.log
 ```
 
+`scripts/status.sh` shows the last recorded runtime error from `~/.follow-builders/state/last-error.txt` when available. Use the recorded suggestion before retrying.
+
 Change schedule or digest length by rerunning `scripts/setup.mjs`, then reload:
 
 ```bash
