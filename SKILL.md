@@ -105,6 +105,12 @@ node scripts/setup.mjs --chat-id "oc_xxx" --model "gpt-5.5"
 
 ## Preview, Confirm, Send, Enable
 
+Run preflight before enabling automation. It checks required commands, Follow Builders feed generation, Codex minimal generation, and Lark authorization without sending a group message:
+
+```bash
+scripts/preflight.sh
+```
+
 Generate a preview without sending:
 
 ```bash
@@ -123,7 +129,7 @@ After confirmation:
 scripts/enable.sh
 ```
 
-`--force` sends a test digest and records today's success. Loading the task then runs its login check but safely skips the duplicate.
+`--force` sends a test digest and records today's success. `scripts/enable.sh` runs preflight before loading the LaunchAgent. Loading the task then runs its login check but safely skips the duplicate.
 
 ## Delivery Behavior
 

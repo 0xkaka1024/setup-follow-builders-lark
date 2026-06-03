@@ -28,8 +28,13 @@ EOF
 cat > "$FAKE_CODEX" <<'EOF'
 #!/bin/zsh
 set -euo pipefail
+if [[ "${1:-}" == "--version" ]]; then
+  echo "codex-cli smoke"
+  exit 0
+fi
 OUTPUT=""
 MODEL=""
+PROMPT_TEXT=""
 while [[ "$#" -gt 0 ]]; do
   if [[ "$1" == "--output-last-message" ]]; then
     OUTPUT="$2"
@@ -41,6 +46,7 @@ while [[ "$#" -gt 0 ]]; do
     shift 2
     continue
   fi
+  PROMPT_TEXT="$PROMPT_TEXT $1"
   shift
 done
 cat >/dev/null
@@ -48,7 +54,11 @@ if [[ -n "$MODEL" ]]; then
   echo "The '$MODEL' model is not supported when using Codex with this account." >&2
   exit 1
 fi
-printf 'AI Builders Digest | Smoke test\n' > "$OUTPUT"
+if [[ "$PROMPT_TEXT" == *"Output exactly: OK"* ]]; then
+  printf 'OK\n' > "$OUTPUT"
+else
+  printf 'AI Builders Digest | Smoke test\n' > "$OUTPUT"
+fi
 EOF
 
 cat > "$FAKE_LARK" <<EOF
@@ -73,6 +83,7 @@ RUNTIME="$HOME_DIR/.follow-builders/bin/push-lark-digest.sh"
 
 HOME="$HOME_DIR" "$RUNTIME" --generate-only | grep -q "Smoke test"
 grep -q "unsupported-model" "$HOME_DIR/.follow-builders/logs/codex-model-error.log"
+HOME="$HOME_DIR" "$SCRIPT_DIR/preflight.sh" | grep -q "Preflight passed"
 HOME="$HOME_DIR" "$RUNTIME" --force >/dev/null
 HOME="$HOME_DIR" "$RUNTIME" | grep -q "Digest already sent"
 grep -q -- "--chat-id oc_smoketest" "$LARK_LOG"

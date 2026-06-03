@@ -91,6 +91,7 @@ await writeFile(plistPath, renderPlist({ label, runtimeScript, userDir, delivery
 console.log(`Configured Follow Builders Lark digest.`);
 console.log(`Config: ${join(userDir, "config.json")}`);
 console.log(`LaunchAgent: ${plistPath}`);
+console.log(`Preflight: ${join(scriptDir, "preflight.sh")}`);
 console.log(`Preview: ${runtimeScript} --generate-only`);
 console.log(`Enable after user confirmation: ${join(scriptDir, "enable.sh")}`);
 
