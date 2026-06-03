@@ -107,16 +107,30 @@ if [[ -n "$MODEL" ]]; then
   CODEX_MODEL_ARGS=(--model "$MODEL")
 fi
 
-"$CODEX_BIN" exec \
-  "${CODEX_MODEL_ARGS[@]}" \
-  --config 'model_reasoning_effort="low"' \
-  --sandbox read-only \
-  --skip-git-repo-check \
-  --cd "$USER_DIR" \
-  --output-last-message "$WORK_DIR/digest.txt" \
-  - < "$WORK_DIR/request.txt" > "$USER_DIR/logs/codex.log" 2>&1
+run_codex() {
+  local log_path="$1"
+  shift
+  "$CODEX_BIN" exec \
+    "$@" \
+    --config 'model_reasoning_effort="low"' \
+    --sandbox read-only \
+    --skip-git-repo-check \
+    --cd "$USER_DIR" \
+    --output-last-message "$WORK_DIR/digest.txt" \
+    - < "$WORK_DIR/request.txt" > "$log_path" 2>&1
+}
 
-if [[ ! -s "$WORK_DIR/digest.txt" ]]; then
+CODEX_STATUS=0
+run_codex "$USER_DIR/logs/codex.log" "${CODEX_MODEL_ARGS[@]}" || CODEX_STATUS=$?
+
+if [[ "$CODEX_STATUS" != "0" && -n "$MODEL" ]] && grep -Eqi "model .*not supported|requires a newer version of Codex" "$USER_DIR/logs/codex.log"; then
+  cp "$USER_DIR/logs/codex.log" "$USER_DIR/logs/codex-model-error.log"
+  : > "$WORK_DIR/digest.txt"
+  CODEX_STATUS=0
+  run_codex "$USER_DIR/logs/codex.log" || CODEX_STATUS=$?
+fi
+
+if [[ "$CODEX_STATUS" != "0" || ! -s "$WORK_DIR/digest.txt" ]]; then
   echo "Digest generation returned no content" >&2
   exit 1
 fi

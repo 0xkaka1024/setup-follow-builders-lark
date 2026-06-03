@@ -29,15 +29,25 @@ cat > "$FAKE_CODEX" <<'EOF'
 #!/bin/zsh
 set -euo pipefail
 OUTPUT=""
+MODEL=""
 while [[ "$#" -gt 0 ]]; do
   if [[ "$1" == "--output-last-message" ]]; then
     OUTPUT="$2"
     shift 2
     continue
   fi
+  if [[ "$1" == "--model" ]]; then
+    MODEL="$2"
+    shift 2
+    continue
+  fi
   shift
 done
 cat >/dev/null
+if [[ -n "$MODEL" ]]; then
+  echo "The '$MODEL' model is not supported when using Codex with this account." >&2
+  exit 1
+fi
 printf 'AI Builders Digest | Smoke test\n' > "$OUTPUT"
 EOF
 
@@ -56,11 +66,13 @@ node "$SCRIPT_DIR/setup.mjs" \
   --follow-builders-dir "$FOLLOW_BUILDERS_DIR" \
   --codex-bin "$FAKE_CODEX" \
   --lark-bin "$FAKE_LARK" \
+  --model "unsupported-model" \
   --node-bin "$(command -v node)" >/dev/null
 
 RUNTIME="$HOME_DIR/.follow-builders/bin/push-lark-digest.sh"
 
 HOME="$HOME_DIR" "$RUNTIME" --generate-only | grep -q "Smoke test"
+grep -q "unsupported-model" "$HOME_DIR/.follow-builders/logs/codex-model-error.log"
 HOME="$HOME_DIR" "$RUNTIME" --force >/dev/null
 HOME="$HOME_DIR" "$RUNTIME" | grep -q "Digest already sent"
 grep -q -- "--chat-id oc_smoketest" "$LARK_LOG"
